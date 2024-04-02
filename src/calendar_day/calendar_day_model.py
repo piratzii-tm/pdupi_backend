@@ -8,7 +8,7 @@ class CalendarDayModel(Base):
 
     id = Column(Integer, primary_key=True, index=True, unique=True, autoincrement=True)
 
-    class_id = Column(Integer, ForeignKey("gym_classes.id"), primary_key=True)
+    class_id = Column(Integer, ForeignKey("gym_classes.id"))
     day = Column(Integer, nullable=False)
     starting_hour = Column(Integer, nullable=False)
     ending_hour = Column(Integer, nullable=False)

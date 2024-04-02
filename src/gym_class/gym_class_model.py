@@ -9,12 +9,12 @@ class GymClassModel(Base):
     id = Column(Integer, primary_key=True, index=True, unique=True, autoincrement=True)
 
     class_name = Column(String(100), nullable=False)
-    instructor_id = Column(Integer, ForeignKey("instructors.id"), primary_key=True)
+    instructor_id = Column(Integer, ForeignKey("instructors.id"))
     max_slots = Column(Integer, nullable=False)
     occupied_slots = Column(Integer, nullable=False)
 
 
-class GymClassBase:
+class GymClassBase(BaseModel):
     class_name: str
     instructor_id: str
     max_slots: int

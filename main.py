@@ -1,30 +1,32 @@
-from fastapi import FastAPI, Depends, status
-from typing import Annotated
-from models import instructor_model, client_model, reservation_model, calendarday_model, gym_class_model
-from database import engine, SessionLocal
-from sqlalchemy.orm import Session
-from controllers import register_client_controller
+from fastapi import FastAPI
+from starlette.middleware.cors import CORSMiddleware
+from database import engine
+from src.instructor.instructor_model import InstructorModel
+from src.client.client_model import ClientModel
+from src.calendar_day.calendar_day_model import CalendarDayModel
+from src.reservation.reservation_model import ReservationModel
+from src.gym_class.gym_class_model import GymClassModel
+from src.admin.admin_model import AdminModel
+
+from src.client.client_router import client_router
 
 app = FastAPI()
 
-client_model.ClientModel.metadata.create_all(bind=engine)
-instructor_model.InstructorModel.metadata.create_all(bind=engine)
-gym_class_model.GymClassModel.metadata.create_all(bind=engine)
-calendarday_model.CalendarDayModel.metadata.create_all(bind=engine)
-reservation_model.ReservationModel.metadata.create_all(bind=engine)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["GET", "POST", "PUT", "DELETE"],
+    allow_headers=["*"],
+)
+
+app.include_router(client_router)
+
+ClientModel.metadata.create_all(bind=engine)
+InstructorModel.metadata.create_all(bind=engine)
+GymClassModel.metadata.create_all(bind=engine)
+CalendarDayModel.metadata.create_all(bind=engine)
+ReservationModel.metadata.create_all(bind=engine)
+AdminModel.metadata.create_all(bind=engine)
 
 
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
-
-db_dependency = Annotated[Session, Depends(get_db)]
-
-
-@app.post("/register", status_code=status.HTTP_201_CREATED)
-async def create_gym(client: client_model.ClientBase, db: db_dependency):
-    register_client_controller.register_client(client, db)
