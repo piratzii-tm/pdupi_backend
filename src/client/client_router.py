@@ -19,7 +19,7 @@ async def me(current_user_token: dict = Depends(get_current_user)):
     return client_service.get_client_by_email(current_user_token["sub"])
 
 
-@client_router.get('/{id}')
+@client_router.get('/')
 def get_client_by_id(user_id: int):
     client = client_service.get_client_by_id(user_id)
 

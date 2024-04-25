@@ -13,8 +13,8 @@ async def me():
     print("Implement logic")
 
 
-@admin_router.get("/{id}")
-async def get_admin_by_id():
+@admin_router.get("/")
+async def get_admin_by_id(admin_id: int):
     print("Implement logic")
 
 
