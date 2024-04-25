@@ -9,6 +9,7 @@ from src.gym_class.gym_class_model import GymClassModel
 from src.admin.admin_model import AdminModel
 
 from src.client.client_router import client_router
+from src.admin.admin_router import admin_router
 
 app = FastAPI()
 
@@ -21,6 +22,7 @@ app.add_middleware(
 )
 
 app.include_router(client_router)
+app.include_router(admin_router)
 
 ClientModel.metadata.create_all(bind=engine)
 InstructorModel.metadata.create_all(bind=engine)

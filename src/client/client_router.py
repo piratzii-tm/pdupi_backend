@@ -1,11 +1,12 @@
 from datetime import timedelta
 from hashlib import sha256
 
-from fastapi import HTTPException, APIRouter, Depends
+from fastapi import HTTPException, APIRouter, Depends, Request
 from fastapi.security import OAuth2PasswordRequestForm
 
 from src.client.client_model import ClientModel, ClientBase
 from src.client.client_service import ClientService
+from src.reservation.reservation_model import ReservationModel
 
 from constants.helpers.jwt_handlers import ACCESS_TOKEN_EXPIRE_MINUTES, create_access_token, get_current_user
 
@@ -20,24 +21,24 @@ async def me(current_user_token: dict = Depends(get_current_user)):
 
 @client_router.get('/{id}')
 def get_client_by_id(user_id: int):
-    user = client_service.get_client_by_id(user_id)
+    client = client_service.get_client_by_id(user_id)
 
-    if not user:
+    if not client:
         raise HTTPException(status_code=404, detail="No user found at that id")
 
-    return user
+    return client
 
 
 @client_router.post('/login')
 async def login(login_info: OAuth2PasswordRequestForm = Depends()):
-    user = client_service.login_client(login_info)
+    client = client_service.login_client(login_info)
 
-    if not user:
+    if not client:
         raise HTTPException(status_code=400, detail="Incorrect email or password")
 
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
-        data={"sub": user.email}, expires_delta=access_token_expires
+        data={"sub": client.email}, expires_delta=access_token_expires
     )
 
     return {"access_token": access_token, "token_type": "bearer"}
@@ -56,21 +57,44 @@ async def register(client_base: ClientBase):
     return {"access_token": access_token, "token_type": "bearer"}
 
 
-@client_router.get("/all")
+@client_router.post("/all")
 async def get_all_clients():
-    print("Implement logic")
+    clients = client_service.get_all_clients()
+
+    if not clients:
+        raise HTTPException(status_code=400, detail="There are no users registered.")
+
+    print(clients)
+
+    return clients
 
 
-@client_router.get("/{id}/classes")
-async def get_all_classes():
-    print("Implement logic")
+@client_router.post("/classes")
+async def get_all_classes(client_id: int):
+    classes = client_service.get_all_classes(client_id)
+
+    if not classes or len(classes) == 0:
+        raise HTTPException(status_code=400, detail="User did not registered in any class.")
+
+    return classes
 
 
-@client_router.post("/{id}/classes/{class_id}/join")
-async def join_class():
-    print("Implement logic")
+@client_router.post("/join")
+async def join_class(client_id: int, day_id: int, class_id: int):
+    response = client_service.join_class(ReservationModel(**{
+        "client_id": client_id,
+        "class_id": class_id,
+        "day_id": day_id
+    }))
+
+    if not response:
+        raise HTTPException(status_code=400, detail="User already joined the class")
 
 
-@client_router.post("/{id}/classes/{class_id}/exit")
-async def exit_class():
-    print("Implement logic")
+@client_router.post("/exit")
+async def exit_class(client_id: int, day_id: int, class_id: int):
+    client_service.exit_class(ReservationModel(**{
+        "client_id": client_id,
+        "class_id": class_id,
+        "day_id": day_id
+    }))

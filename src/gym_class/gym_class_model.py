@@ -16,6 +16,6 @@ class GymClassModel(Base):
 
 class GymClassBase(BaseModel):
     class_name: str
-    instructor_id: str
+    instructor_id: int
     max_slots: int
     occupied_slots: int
