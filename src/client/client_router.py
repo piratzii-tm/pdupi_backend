@@ -3,7 +3,6 @@ from hashlib import sha256
 
 from fastapi import HTTPException, APIRouter, Depends
 from fastapi.security import OAuth2PasswordRequestForm
-from pydantic import BaseModel
 
 from src.client.client_model import ClientModel, ClientBase
 from src.client.client_service import ClientService
@@ -20,7 +19,7 @@ async def me(current_user_token: dict = Depends(get_current_user)):
 
 
 @client_router.get('/{id}')
-def get_user_by_id(user_id: int):
+def get_client_by_id(user_id: int):
     user = client_service.get_client_by_id(user_id)
 
     if not user:
@@ -55,3 +54,23 @@ async def register(client_base: ClientBase):
     )
 
     return {"access_token": access_token, "token_type": "bearer"}
+
+
+@client_router.get("/all")
+async def get_all_clients():
+    print("Implement logic")
+
+
+@client_router.get("/{id}/classes")
+async def get_all_classes():
+    print("Implement logic")
+
+
+@client_router.post("/{id}/classes/{class_id}/join")
+async def join_class():
+    print("Implement logic")
+
+
+@client_router.post("/{id}/classes/{class_id}/exit")
+async def exit_class():
+    print("Implement logic")
