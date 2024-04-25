@@ -3,9 +3,10 @@ from starlette import status
 
 from src.client.client_repository import ClientRepository
 from src.client.client_model import ClientModel
+from src.reservation.reservation_model import ReservationModel
 from hashlib import sha256
 from typing import Optional
-from fastapi import Depends, HTTPException
+from fastapi import Depends
 
 
 class ClientService:
@@ -29,3 +30,15 @@ class ClientService:
 
     def register_client(self, user_data: ClientModel):
         self.client_repository.register_client(new_user=user_data)
+
+    def get_all_clients(self):
+        return self.client_repository.get_all_clients()
+
+    def get_all_classes(self, received_id: int):
+        return self.client_repository.get_all_classes(received_id=received_id)
+
+    def join_class(self, reservation: ReservationModel):
+        return self.client_repository.join_class(reservation)
+
+    def exit_class(self, reservation: ReservationModel):
+        self.client_repository.exit_class(reservation)
