@@ -1,9 +1,12 @@
-from datetime import datetime, timedelta
-from typing import Optional
 from fastapi.security import OAuth2PasswordBearer
 from fastapi import Depends, HTTPException
+
 import jwt
 from starlette import status
+
+from typing import Optional
+from datetime import datetime, timedelta
+
 
 oauth2_scheme_client = OAuth2PasswordBearer(tokenUrl="/client/login")
 oauth2_scheme_admin = OAuth2PasswordBearer(tokenUrl="/admin/login")

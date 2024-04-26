@@ -1,4 +1,5 @@
 from sqlalchemy import Column, Boolean, String
+
 from src.user.user_model import UserBase, UserModel
 
 
