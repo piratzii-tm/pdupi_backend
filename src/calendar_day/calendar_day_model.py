@@ -11,9 +11,11 @@ class CalendarDayModel(Base):
     day = Column(Integer, nullable=False)
     month = Column(Integer, nullable=False)
     starting_hour = Column(Integer, nullable=False)
+    class_id = Column(Integer, nullable=False)
 
 
 class CalendarDayBase(BaseModel):
     day: int
     month: int
     starting_hour: int
+    class_id: int

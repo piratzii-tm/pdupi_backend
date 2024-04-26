@@ -52,10 +52,11 @@ async def add_class(body: AddClassBody):
     admin_service.add_class(CalendarDayModel(**{
         "day": body.day,
         "month": body.month,
-        "starting_hour": body.starting_hour
+        "starting_hour": body.starting_hour,
+        "class_id": -1
     }), GymClassModel(**{
         "class_name": body.class_name,
         "instructor_id": body.instructor_id,
         "max_slots": body.max_slots,
-        "occupied_slots": body.occupied_slots
+        "occupied_slots": 0
     }))

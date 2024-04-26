@@ -8,9 +8,15 @@ class AdminRepository:
     def __init__(self):
         self.db = next(get_db())
 
-    def add_class(self, calendar_day: CalendarDayModel, gym_class: GymClassModel):
-        self.db.add(calendar_day)
-        self.db.add(gym_class)
+    def add_class(self, received_calendar_day: CalendarDayModel, received_gym_class: GymClassModel):
+        gym_class: GymClassModel = self.db.query(GymClassModel).where(GymClassModel.class_name == received_gym_class.class_name).first()
+        if not gym_class:
+            print("asdasd")
+            self.db.add(received_gym_class)
+            self.db.commit()
+            gym_class: GymClassModel = self.db.query(GymClassModel).where(GymClassModel.class_name == received_gym_class.class_name).first()
+        received_calendar_day.class_id = gym_class.id
+        self.db.add(received_calendar_day)
         self.db.commit()
 
     def get_admin_by_email(self, received_email: str) -> AdminModel:
