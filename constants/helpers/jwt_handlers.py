@@ -6,6 +6,7 @@ import jwt
 from starlette import status
 
 oauth2_scheme_client = OAuth2PasswordBearer(tokenUrl="/client/login")
+oauth2_scheme_admin = OAuth2PasswordBearer(tokenUrl="/admin/login")
 
 SECRET_KEY = "your-secret-key"
 ALGORITHM = "HS256"
@@ -32,7 +33,20 @@ def decode_token(token: str):
         return None
 
 
-def get_current_user(token: str = Depends(oauth2_scheme_client)):
+def get_current_client(token: str = Depends(oauth2_scheme_client)):
+    print(token)
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+    payload = decode_token(token)
+    if payload is None:
+        raise credentials_exception
+    return payload
+
+
+def get_current_admin(token: str = Depends(oauth2_scheme_admin)):
     print(token)
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,

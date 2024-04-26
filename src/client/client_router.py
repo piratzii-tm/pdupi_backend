@@ -1,21 +1,24 @@
 from datetime import timedelta
 from hashlib import sha256
 
-from fastapi import HTTPException, APIRouter, Depends, Request
+from fastapi import HTTPException, APIRouter, Depends
 from fastapi.security import OAuth2PasswordRequestForm
 
 from src.client.client_model import ClientModel, ClientBase
+from src.user.user_model import UserBase
 from src.client.client_service import ClientService
 from src.reservation.reservation_model import ReservationModel
+from datetime import date
 
-from constants.helpers.jwt_handlers import ACCESS_TOKEN_EXPIRE_MINUTES, create_access_token, get_current_user
+
+from constants.helpers.jwt_handlers import ACCESS_TOKEN_EXPIRE_MINUTES, create_access_token, get_current_client
 
 client_router = APIRouter(prefix='/client', tags=["product"])
 client_service = ClientService()
 
 
 @client_router.post("/")
-async def me(current_user_token: dict = Depends(get_current_user)):
+async def me(current_user_token: dict = Depends(get_current_client)):
     return client_service.get_client_by_email(current_user_token["sub"])
 
 
@@ -45,16 +48,27 @@ async def login(login_info: OAuth2PasswordRequestForm = Depends()):
 
 
 @client_router.post("/register")
-async def register(client_base: ClientBase):
+async def register(client_base: UserBase):
     client_base.password = sha256(str.encode(client_base.password)).hexdigest()
-    client_service.register_client(ClientModel(**client_base.dict()))
+    response = client_service.register_client(ClientModel(**{
+        "first_name": client_base.first_name,
+        "last_name": client_base.last_name,
+        "email": client_base.email,
+        "password": client_base.password,
+        "is_active": True,
+        "created_at": date.today(),
+        "updated_at": date.today()
+    }))
 
-    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    access_token = create_access_token(
-        data={"sub": client_base.email}, expires_delta=access_token_expires
-    )
+    if response:
+        access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+        access_token = create_access_token(
+            data={"sub": client_base.email}, expires_delta=access_token_expires
+        )
 
-    return {"access_token": access_token, "token_type": "bearer"}
+        return {"access_token": access_token, "token_type": "bearer"}
+    else:
+        raise HTTPException(status_code=400, detail="Email already in use.")
 
 
 @client_router.post("/all")
