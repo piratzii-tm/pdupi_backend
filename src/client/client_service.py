@@ -1,12 +1,13 @@
 from fastapi.security import OAuth2PasswordRequestForm
-from starlette import status
 
 from src.client.client_repository import ClientRepository
 from src.client.client_model import ClientModel
+from src.user.user_model import UserModel
 from src.reservation.reservation_model import ReservationModel
 from hashlib import sha256
 from typing import Optional
 from fastapi import Depends
+from datetime import date
 
 
 class ClientService:
@@ -26,10 +27,11 @@ class ClientService:
         if not user or user.password != hashed_password:
             return None
 
+        self.client_repository.login_client(user.id)
         return user
 
     def register_client(self, user_data: ClientModel):
-        self.client_repository.register_client(new_user=user_data)
+        return self.client_repository.register_client(new_user=user_data)
 
     def get_all_clients(self):
         return self.client_repository.get_all_clients()

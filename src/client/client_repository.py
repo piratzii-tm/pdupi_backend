@@ -4,6 +4,7 @@ from src.gym_class.gym_class_model import GymClassModel
 from src.reservation.reservation_model import ReservationModel
 from src.calendar_day.calendar_day_model import CalendarDayModel
 from typing import List
+from datetime import date
 
 
 class ClientRepository:
@@ -21,8 +22,12 @@ class ClientRepository:
             .first()
 
     def register_client(self, new_user: ClientModel):
-        self.db.add(new_user)
-        self.db.commit()
+        users: List[ClientModel] = self.db.query(ClientModel).where(ClientModel.email == new_user.email).all()
+        if len(users) == 0:
+            self.db.add(new_user)
+            self.db.commit()
+            return True
+        return False
 
     def get_all_clients(self):
         clients: List[ClientModel] = self.db.query(ClientModel).all()
@@ -32,7 +37,6 @@ class ClientRepository:
         client_reservations: List[ReservationModel] = self.db.query(ReservationModel) \
             .filter(ReservationModel.client_id == received_id)
 
-        print(client_reservations)
         classes = []
 
         for reservation in client_reservations:
@@ -64,3 +68,13 @@ class ClientRepository:
             ReservationModel.day_id == reservation.day_id
         ).delete()
         self.db.commit()
+
+    def login_client(self, user_id: int):
+        client = self.db.query(ClientModel).where(ClientModel.id == user_id).first()
+        print("Hello1")
+        if client:
+            print("Hello2")
+            setattr(client, "updated_at", date.today())
+            self.db.commit()
+            self.db.refresh(client)
+
