@@ -41,7 +41,7 @@ async def add_trainer(body: AddTrainerBody):
     admin_service.add_trainer(InstructorModel(**{
         "first_name": body.first_name,
         "last_name": body.last_name,
-        "email": f"${body.last_name.lower()}.${body.first_name.lower()}@gymfit.ro",
+        "email": f"{body.last_name.lower()}.{body.first_name.lower()}@gymfit.ro",
         "password": "GymFit2024",
         "hire_date": date.today()
     }))
