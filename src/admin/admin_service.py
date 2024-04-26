@@ -1,12 +1,14 @@
+from fastapi.security import OAuth2PasswordRequestForm
+from fastapi import Depends
+
+from hashlib import sha256
+from typing import Optional
+
 from src.admin.admin_repository import AdminRepository
 from src.gym_class.gym_class_model import GymClassModel
 from src.calendar_day.calendar_day_model import CalendarDayModel
 from src.admin.admin_model import AdminModel
 from src.instructor.instructor_model import InstructorModel
-from fastapi.security import OAuth2PasswordRequestForm
-from hashlib import sha256
-from typing import Optional
-from fastapi import Depends
 
 class AdminService:
     def __init__(self):

@@ -1,5 +1,6 @@
-from src.instructor.instructor_model import InstructorModel
 from database import get_db
+from src.instructor.instructor_model import InstructorModel
+
 
 class InstructorRepository:
     def __init__(self):

@@ -1,6 +1,9 @@
 from fastapi import FastAPI
+
 from starlette.middleware.cors import CORSMiddleware
+
 from database import engine
+
 from src.instructor.instructor_model import InstructorModel
 from src.client.client_model import ClientModel
 from src.calendar_day.calendar_day_model import CalendarDayModel
@@ -23,16 +26,21 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(client_router)
-app.include_router(admin_router)
-app.include_router(gym_class_router)
-app.include_router(instructor_router)
+routers = [
+    client_router, admin_router, gym_class_router, instructor_router
+]
 
-ClientModel.metadata.create_all(bind=engine)
-InstructorModel.metadata.create_all(bind=engine)
-GymClassModel.metadata.create_all(bind=engine)
-CalendarDayModel.metadata.create_all(bind=engine)
-ReservationModel.metadata.create_all(bind=engine)
-AdminModel.metadata.create_all(bind=engine)
+models = [
+    ClientModel,
+    InstructorModel,
+    GymClassModel,
+    CalendarDayModel,
+    ReservationModel,
+    AdminModel
+]
 
+for router in routers:
+    app.include_router(router)
 
+for model in models:
+    model.metadata.create_all(bind=engine)

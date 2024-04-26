@@ -1,16 +1,16 @@
-import datetime
-
 from fastapi import APIRouter, Depends, HTTPException
+from fastapi.security import OAuth2PasswordRequestForm
+
+from datetime import timedelta, date
+
 from src.admin.admin_service import AdminService
 from src.calendar_day.calendar_day_model import CalendarDayModel
 from src.gym_class.gym_class_model import GymClassModel
 from src.instructor.instructor_model import InstructorModel
+
 from constants.models.add_class_body import AddClassBody
 from constants.models.add_trainer_body import AddTrainerBody
 from constants.helpers.jwt_handlers import ACCESS_TOKEN_EXPIRE_MINUTES, create_access_token, get_current_admin
-from fastapi.security import OAuth2PasswordRequestForm
-from datetime import timedelta
-from datetime import date
 
 admin_router = APIRouter(prefix="/admin", tags=["products"])
 admin_service = AdminService()

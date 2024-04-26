@@ -1,6 +1,6 @@
-from sqlalchemy import Column, Integer, String, ForeignKey
-from database import Base
+from sqlalchemy import Column, Integer
 from pydantic import BaseModel
+from database import Base
 
 
 class CalendarDayModel(Base):
