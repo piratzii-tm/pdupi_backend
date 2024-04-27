@@ -22,7 +22,9 @@ class GymClassRepository:
             day: CalendarDayModel = (self.db.query(CalendarDayModel)
                                      .filter(CalendarDayModel.day == gym_class_body.day)
                                      .filter(CalendarDayModel.month == gym_class_body.month).first())
-            response = self.db.query(GymClassModel).where(GymClassModel.id == day.class_id).all()
+            if day:
+                response = self.db.query(GymClassModel).where(GymClassModel.id == day.class_id).all()
+            else: response = None
         else:
             response = []
             gym_classes = self.db.query(GymClassModel).all()
