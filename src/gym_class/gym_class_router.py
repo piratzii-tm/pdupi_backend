@@ -1,19 +1,31 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
+
+from src.gym_class.gym_class_service import GymClassService
+from constants.models.gym_class_body import GymClassBody
 
 gym_class_router = APIRouter(prefix="/gym_class", tags=["product"])
-# TODO Add gym class service here
+gym_class_service = GymClassService()
 
 
 @gym_class_router.get("/")
-async def get_class_by_id(id: int):
-    print("Implement logic")
+async def get_class_by_id(gym_id: int):
+    gym_class = gym_class_service.get_gym_class(gym_id=gym_id)
+    if not gym_class:
+        raise HTTPException(status_code=404, detail="No class with the specified id.")
+    return gym_class
 
 
 @gym_class_router.get("/all")
 async def get_all_classes():
-    print("Implement logic")
+    gym_class = gym_class_service.get_gym_class()
+    if not gym_class:
+        raise HTTPException(status_code=404, detail="No classes.")
+    return gym_class
 
 
-@gym_class_router.get("/filtered")
-async def get_class_by_date(year: int, month: int):
-    print("Implement logic")
+@gym_class_router.post("/filtered")
+async def get_class_by_date(body: GymClassBody):
+    gym_class =  gym_class_service.get_gym_class(gym_class_body=body)
+    if not gym_class:
+        raise HTTPException(status_code=404, detail="No class in ")
+    return gym_class

@@ -1,15 +1,14 @@
-from datetime import timedelta
-from hashlib import sha256
-
 from fastapi import HTTPException, APIRouter, Depends
 from fastapi.security import OAuth2PasswordRequestForm
 
-from src.client.client_model import ClientModel, ClientBase
+from datetime import timedelta
+from hashlib import sha256
+from datetime import date
+
+from src.client.client_model import ClientModel
 from src.user.user_model import UserBase
 from src.client.client_service import ClientService
 from src.reservation.reservation_model import ReservationModel
-from datetime import date
-
 
 from constants.helpers.jwt_handlers import ACCESS_TOKEN_EXPIRE_MINUTES, create_access_token, get_current_client
 from constants.models.client_interaction_class import ClientInteractionClass
@@ -66,7 +65,6 @@ async def register(client_base: UserBase):
         access_token = create_access_token(
             data={"sub": client_base.email}, expires_delta=access_token_expires
         )
-
         return {"access_token": access_token, "token_type": "bearer"}
     else:
         raise HTTPException(status_code=400, detail="Email already in use.")
@@ -77,9 +75,7 @@ async def get_all_clients():
     clients = client_service.get_all_clients()
 
     if not clients:
-        raise HTTPException(status_code=400, detail="There are no users registered.")
-
-    print(clients)
+        raise HTTPException(status_code=404, detail="There are no users registered.")
 
     return clients
 

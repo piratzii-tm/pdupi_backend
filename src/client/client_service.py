@@ -1,13 +1,12 @@
 from fastapi.security import OAuth2PasswordRequestForm
+from fastapi import Depends
+
+from hashlib import sha256
+from typing import Optional
 
 from src.client.client_repository import ClientRepository
 from src.client.client_model import ClientModel
-from src.user.user_model import UserModel
 from src.reservation.reservation_model import ReservationModel
-from hashlib import sha256
-from typing import Optional
-from fastapi import Depends
-from datetime import date
 
 
 class ClientService:
