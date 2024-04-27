@@ -11,6 +11,7 @@ from src.client.client_service import ClientService
 from src.reservation.reservation_model import ReservationModel
 
 from constants.helpers.jwt_handlers import ACCESS_TOKEN_EXPIRE_MINUTES, create_access_token, get_current_client
+from constants.models.client_interaction_class import ClientInteractionClass
 
 client_router = APIRouter(prefix='/client', tags=["product"])
 client_service = ClientService()
@@ -69,7 +70,7 @@ async def register(client_base: UserBase):
         raise HTTPException(status_code=400, detail="Email already in use.")
 
 
-@client_router.post("/all")
+@client_router.get("/all")
 async def get_all_clients():
     clients = client_service.get_all_clients()
 
@@ -79,7 +80,7 @@ async def get_all_clients():
     return clients
 
 
-@client_router.post("/classes")
+@client_router.get("/classes")
 async def get_all_classes(client_id: int):
     classes = client_service.get_all_classes(client_id)
 
@@ -90,11 +91,11 @@ async def get_all_classes(client_id: int):
 
 
 @client_router.post("/join")
-async def join_class(client_id: int, day_id: int, class_id: int):
+async def join_class(body: ClientInteractionClass):
     response = client_service.join_class(ReservationModel(**{
-        "client_id": client_id,
-        "class_id": class_id,
-        "day_id": day_id
+        "client_id": body.client_id,
+        "class_id": body.class_id,
+        "day_id": body.day_id
     }))
 
     if not response:
@@ -102,9 +103,9 @@ async def join_class(client_id: int, day_id: int, class_id: int):
 
 
 @client_router.post("/exit")
-async def exit_class(client_id: int, day_id: int, class_id: int):
+async def exit_class(body: ClientInteractionClass):
     client_service.exit_class(ReservationModel(**{
-        "client_id": client_id,
-        "class_id": class_id,
-        "day_id": day_id
+        "client_id": body.client_id,
+        "class_id": body.class_id,
+        "day_id": body.day_id
     }))

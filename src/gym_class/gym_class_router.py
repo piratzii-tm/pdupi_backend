@@ -27,5 +27,5 @@ async def get_all_classes():
 async def get_class_by_date(body: GymClassBody):
     gym_class =  gym_class_service.get_gym_class(gym_class_body=body)
     if not gym_class:
-        raise HTTPException(status_code=404, detail="No class in ")
+        raise HTTPException(status_code=404, detail=f"No class in {body.day}.{body.month}")
     return gym_class
