@@ -54,6 +54,10 @@ class ClientRepository:
                                                       .filter(ReservationModel.client_id == reservation.client_id)
                                                       .filter(ReservationModel.class_id == reservation.class_id)
                                                       .filter(ReservationModel.day_id == reservation.day_id).all())
+        class_joined = self.db.query(GymClassModel).filter(GymClassModel.id == ReservationModel.class_id).first()
+        setattr(class_joined, "occupied_slots", class_joined.occupied_slots + 1)
+        self.db.commit()
+        self.db.refresh(class_joined)
 
         if len(users_reservations) == 0:
             self.db.add(reservation)
@@ -68,6 +72,10 @@ class ClientRepository:
          .filter(ReservationModel.class_id == reservation.class_id)
          .filter(ReservationModel.day_id == reservation.day_id
                  ).delete())
+        class_joined = self.db.query(GymClassModel).filter(GymClassModel.id == ReservationModel.class_id).first()
+        setattr(class_joined, "occupied_slots", class_joined.occupied_slots - 1)
+        self.db.commit()
+        self.db.refresh(class_joined)
 
         self.db.commit()
 
