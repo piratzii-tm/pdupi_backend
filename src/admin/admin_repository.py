@@ -17,8 +17,8 @@ class AdminRepository:
         if not gym_class:
             self.db.add(received_gym_class)
             self.db.commit()
-            gym_class: GymClassModel = self.db.query(GymClassModel).self.db.query(GymClassModel).filter(GymClassModel.class_name == received_gym_class.class_name ) \
-            .filter(GymClassModel.instructor_id == received_gym_class.instructor_id).first().first()
+            gym_class: GymClassModel = self.db.query(GymClassModel).filter(GymClassModel.class_name == received_gym_class.class_name ) \
+            .filter(GymClassModel.instructor_id == received_gym_class.instructor_id).first()
 
         received_calendar_day.class_id = gym_class.id
         self.db.add(received_calendar_day)
