@@ -54,7 +54,7 @@ class ClientRepository:
                                                       .filter(ReservationModel.client_id == reservation.client_id)
                                                       .filter(ReservationModel.class_id == reservation.class_id)
                                                       .filter(ReservationModel.day_id == reservation.day_id).all())
-        class_joined = self.db.query(GymClassModel).filter(GymClassModel.id == ReservationModel.class_id).first()
+        class_joined = self.db.query(GymClassModel).filter(GymClassModel.id == reservation.class_id).first()
         setattr(class_joined, "occupied_slots", class_joined.occupied_slots + 1)
         self.db.commit()
         self.db.refresh(class_joined)
@@ -67,6 +67,12 @@ class ClientRepository:
         return False
 
     def exit_class(self, reservation: ReservationModel):
+
+        class_joined = self.db.query(GymClassModel).filter(GymClassModel.id == reservation.class_id).first()
+        setattr(class_joined, "occupied_slots", class_joined.occupied_slots - 1)
+        self.db.commit()
+        self.db.refresh(class_joined)
+
         (self.db.query(ReservationModel)
          .filter(ReservationModel.client_id == reservation.client_id)
          .filter(ReservationModel.class_id == reservation.class_id)
